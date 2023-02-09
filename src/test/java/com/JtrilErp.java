@@ -135,7 +135,7 @@ public class JtrilErp {
         driver.findElement(By.cssSelector("#t_TreeNav_4 > .a-TreeView-toggle")).click();
         driver.findElement(By.cssSelector("#t_TreeNav_5 > .a-TreeView-toggle")).click();
         {
-            WebElement element = driver.findElement(By.linkText("Stock Receive (Open Date) (RC-3)"));
+            WebElement element = driver.findElement(By.cssSelector("#t_TreeNav_6 .a-TreeView-label"));
             Actions builder = new Actions(driver);
             builder.moveToElement(element).perform();
         }
@@ -169,7 +169,6 @@ public class JtrilErp {
 
         String loginInput [] = LoginlInitData.jtrillogin_password.split(",");
         Thread.sleep(5000);
-
 
         driver.findElement(By.cssSelector("#cicon > .tooltiptext")).click();
         {
