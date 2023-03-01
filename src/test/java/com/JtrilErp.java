@@ -33,6 +33,8 @@ public class JtrilErp {
     private ScriptsMgmt scriptMgmt;
     private Logger logger;
 
+    public static String[] requisitionDOCNO =null;
+
     @Before
     public void setUp() {
 //		System.setProperty("webdriver.gecko.driver","E:/ERAINFOTECH/Software/geckodriver-v0.31.0-win64/geckodriver.exe");
@@ -72,11 +74,21 @@ public class JtrilErp {
             scriptMgmt.logHeader(InitData.scriptName);
 
             // Execute all test case
-            loginToJTRIL();
+//            loginToJTRIL("Admin");
+
+            loginToJTRIL("Production executive");
             navigationToInventoryManagement();
             createMaterialIssueRequisition();
-            //logOut();
 
+            loginToJTRIL("Factory Head");
+            navigationToInventoryManagementApproved();
+            createMaterialIssueRequisitionApproved();
+
+//            loginToJTRIL("Store manager");
+//            loginToJTRIL("Factory QC Manager");
+
+
+//            logOut();
 
 
         }catch (Exception e)
@@ -84,8 +96,6 @@ public class JtrilErp {
             e.printStackTrace();
             //scriptMgmt.logFail_stop_sendmail(InitData.scriptName,e);
         }
-
-
     }//login
 
 
@@ -94,16 +104,36 @@ public class JtrilErp {
      * Description: Login to JTRIL with legal value
      *
      */
-    public void loginToJTRIL () throws Exception{
+    public void loginToJTRIL (String login) throws Exception{
         String app_server [] = LoginlInitData.jtrilapp_server.split(",");
-        String loginInput [] = LoginlInitData.jtrillogin_password.split(",");
+//        String loginInput [] = LoginlInitData.production_executive_login.split(",");
+        String loginInput [] = null;
+        switch (login) {
+            case "Production executive":
+                loginInput  = LoginlInitData.production_executive_login.split(",");
+                break;
+            case "Factory Head":
+                loginInput  = LoginlInitData.factory_head_login.split(",");
+                break;
+            case "Store manager":
+                loginInput  = LoginlInitData.store_manager_login.split(",");
+                break;
+            case "Factory QC Manager":
+                loginInput  = LoginlInitData.factory_QC_manager_login.split(",");
+                break;
+            case "Admin":
+                loginInput  = LoginlInitData.admin_login.split(",");
+                break;
+            default:
+        }//End of switch
 
         driver.get(app_server[0]);
         driver.findElement(By.id("P9999_USERNAME")).click();
         driver.findElement(By.id("P9999_USERNAME")).sendKeys(loginInput[0]);
         driver.findElement(By.id("P9999_PASSWORD")).sendKeys(loginInput[1]);
         driver.findElement(By.id("LOGIN")).click();
-        Thread.sleep(5000);
+        Thread.sleep(2000);
+       //ogOut(loginInput[0],false);
         writeLog("JTRIL Login Test Case ", true,false);
 
     }//Login
@@ -154,24 +184,24 @@ public class JtrilErp {
      */
     public void createMaterialIssueRequisition() throws Exception{
 
-        String loginInput [] = LoginlInitData.jtrillogin_password.split(",");
-        Thread.sleep(3000);
+        //Thread.sleep(3000);
+        String loginInput [] = LoginlInitData.production_executive_login.split(",");
 
         driver.findElement(By.cssSelector("#cicon > .tooltiptext")).click();
         {
             WebElement element = driver.findElement(By.cssSelector("#cicon > .tooltiptext"));
             Actions builder = new Actions(driver);
             builder.moveToElement(element).perform();
-            Thread.sleep(3000);
+            Thread.sleep(2000);
         }
         {
             WebElement element = driver.findElement(By.tagName("body"));
             Actions builder = new Actions(driver);
             builder.moveToElement(element, 0, 0).perform();
-            Thread.sleep(3000);
+            Thread.sleep(2000);
         }
         driver.switchTo().frame(0);
-        driver.findElement(By.id("P413_REQDDATE|input")).sendKeys("27-Feb-2023");
+        driver.findElement(By.id("P413_REQDDATE|input")).sendKeys("10-Mar-2023");
         Thread.sleep(2000);
         driver.findElement(By.id("P413_REQDDATE|input")).sendKeys(Keys.ENTER);
         Thread.sleep(2000);
@@ -188,7 +218,7 @@ public class JtrilErp {
         driver.findElement(By.cssSelector("#P413_SRCWARECODE_lov_btn > .a-Icon")).click();
         driver.switchTo().defaultContent();
         Thread.sleep(2000);
-        driver.findElement(By.cssSelector("#PopupLov_413_P413_SRCWARECODE_dlg .a-PopupLOV-search")).sendKeys("DW1001 - Dhaka Warehouse");
+        driver.findElement(By.cssSelector("#PopupLov_413_P413_SRCWARECODE_dlg .a-PopupLOV-search")).sendKeys("FG0001 - Central Factory Warehouse (Fg)");
         Thread.sleep(2000);
         driver.findElement(By.cssSelector("#PopupLov_413_P413_SRCWARECODE_dlg .a-PopupLOV-search")).sendKeys(Keys.ENTER);
         Thread.sleep(2000);
@@ -196,7 +226,7 @@ public class JtrilErp {
         driver.switchTo().frame(0);
         driver.findElement(By.cssSelector("#NEXT > .t-Button-label")).click();
         System.out.println("Document Information Entered Successfully!!");
-        Thread.sleep(5000);
+        Thread.sleep(4000);
 
         // **************************//3rd screen//*********************************
         //Enter product information in table row
@@ -248,32 +278,30 @@ public class JtrilErp {
         Actions act2 = new Actions(driver);
         WebElement ele2 = driver.findElement(By.xpath("/html/body/form/div[1]/div/div[2]/div/div[2]/div[2]/div[2]/div[2]/div/div/div[3]/div[3]/div[1]/div[3]/div[4]/table/tbody/tr/td[9]") );
         act2.moveToElement(ele2);
-        Thread.sleep(3000);
         act2.click(ele2).perform();
-        Thread.sleep(3000);
         driver.findElement(By.cssSelector("span.apex-item-option:nth-child(1) > label:nth-child(2)")).click();
-        Thread.sleep(3000);
+        Thread.sleep(2000);
         driver.findElement(By.cssSelector(".apex-item-option--yes > .a-Button")).click(); // Yes option choose
-        Thread.sleep(3000);
+        Thread.sleep(2000);
         //***End 1st row data entry
 
         //Start 2nd row product information
         Actions act3 = new Actions(driver);
         WebElement ele3 = driver.findElement(By.xpath("/html/body/form/div[1]/div/div[2]/div/div[2]/div[2]/div[2]/div[2]/div/div/div[3]/div[3]/div[1]/div[3]/div[4]/table/tbody/tr/td[1]/button/span") );
         act3.moveToElement(ele3);
-        Thread.sleep(3000);
+        Thread.sleep(2000);
         act3.click(ele3).perform();
-        Thread.sleep(3000);
+        Thread.sleep(2000);
         driver.findElement(By.id("prod_info_ig_row_actions_menu_2i")).click();
-        Thread.sleep(3000);
+        Thread.sleep(2000);
         driver.findElement(By.cssSelector("#C524831731703802929_lov_btn > .a-Icon")).click();
-        Thread.sleep(3000);
+        Thread.sleep(2000);
         driver.switchTo().defaultContent();
         driver.findElement(By.xpath("/html/body/div[8]/div[2]/div[1]/input")).clear();
         driver.findElement(By.xpath("/html/body/div[8]/div[2]/div[1]/input")).sendKeys("RM-PRD-0002 - CARBON BLACK");
-        Thread.sleep(3000);
+        Thread.sleep(2000);
         driver.findElement(By.xpath("/html/body/div[8]/div[2]/div[1]/input")).sendKeys(Keys.ENTER);
-        Thread.sleep(3000);
+        Thread.sleep(2000);
 
         driver.switchTo().frame(0);
         {
@@ -306,60 +334,164 @@ public class JtrilErp {
         Actions act4 = new Actions(driver);
         WebElement ele4 = driver.findElement(By.xpath("/html/body/form/div[1]/div/div[2]/div/div[2]/div[2]/div[2]/div[2]/div/div/div[3]/div[3]/div[1]/div[3]/div[4]/table/tbody/tr[2]/td[9]") );
         act3.moveToElement(ele4);
-        Thread.sleep(3000);
+        Thread.sleep(2000);
         act4.click(ele4).perform();
-        Thread.sleep(3000);
+        Thread.sleep(2000);
         driver.findElement(By.cssSelector("span.apex-item-option:nth-child(1) > label:nth-child(2)")).click();
-        Thread.sleep(3000);
+        Thread.sleep(2000);
         driver.findElement(By.cssSelector(".apex-item-option--yes > .a-Button")).click(); // Yes option choose
-        Thread.sleep(3000);
+        Thread.sleep(2000);
         driver.findElement(By.id("R525102492243922821_heading")).click();
         Thread.sleep(2000);
         driver.findElement(By.cssSelector("#NEXT > .t-Button-label")).click();
-        Thread.sleep(5000);
-        driver.findElement(By.cssSelector("#SUBMIT > .t-Button-label")).click();
         Thread.sleep(3000);
+        driver.findElement(By.cssSelector("#SUBMIT > .t-Button-label")).click();
+        Thread.sleep(2000);
 
         driver.switchTo().defaultContent();
         driver.findElement(By.cssSelector(".js-confirmBtn")).click();
-        Thread.sleep(3000);
+        Thread.sleep(2000);
 
         driver.switchTo().frame(0);
         String text2 =driver.findElement(By.cssSelector("#t_Alert_Success .t-Alert-title")).getText();
         //System.out.println("Alert text: "+text2);
-        String[] elements = text2.split("No. :");
-        elements[1] = elements[1].replaceAll("\\s", "");
+        requisitionDOCNO = text2.split("No. :");
+        requisitionDOCNO[1] = requisitionDOCNO[1].replaceAll("\\s", "");
         //System.out.println("Alert text1: " + elements[0]);
-        System.out.println("Alert text2: " + elements[1]);
+        System.out.println("Alert text2: " + requisitionDOCNO[1]);
         driver.findElement(By.cssSelector(".t-Button--noUI")).click();
         Thread.sleep(2000);
 
         //driver.switchTo().defaultContent();
         driver.findElement(By.id("ok-btn")).click();
-        Thread.sleep(55000);
+        Thread.sleep(3000);
+        logOut(loginInput[0],false);
+        //Thread.sleep(5000);
         //End 2nd row product information
-
 
         writeLog("Material Issue Requisition (MI-2) generate successfully and go for Approval ", false, false);
 
+    }//End of createMaterialIssueRequisition
+
+    /**
+     * Function Name: navigationToInventoryManagementApproved
+     * Description: Navigation to Inventory Management Approval screen by Factory head
+     *
+     */
+    public void navigationToInventoryManagementApproved() throws Exception{
+        Thread.sleep(2000);
+        //This option will commenting when stast from scratch
+        //driver.findElement(By.id("t_Button_navControl")).click();
+        driver.findElement(By.cssSelector("#t_TreeNav_2 > .a-TreeView-toggle")).click();
+        {
+            WebElement element = driver.findElement(By.linkText("Transaction Approval"));
+            Actions builder = new Actions(driver);
+            builder.moveToElement(element).perform();
+        }
+        {
+            WebElement element = driver.findElement(By.tagName("body"));
+            Actions builder = new Actions(driver);
+            builder.moveToElement(element, 0, 0).perform();
+        }
+        {
+            WebElement element = driver.findElement(By.linkText("Transaction Approval"));
+            Actions builder = new Actions(driver);
+            builder.moveToElement(element).perform();
+        }
+        driver.findElement(By.linkText("Transaction Approval")).click();
+        {
+            WebElement element = driver.findElement(By.tagName("body"));
+            Actions builder = new Actions(driver);
+            builder.moveToElement(element, 0, 0).perform();
+        }
+        Thread.sleep(3000);
+    }//End of navigationToInventoryManagementApproved
 
 
-    }
+    /**
+     * Function Name: createMaterialIssueRequisitionApproved
+     * Description: this function will find and approved the selected requisition Doc number
+     *
+     */
+    public void createMaterialIssueRequisitionApproved() throws Exception{
+
+        driver.switchTo().defaultContent();
+        driver.findElement(By.cssSelector("#micon > .tooltiptext")).click();
+        Thread.sleep(2000);
+        driver.switchTo().frame(0);
+        driver.findElement(By.id("R801114255824919449_search_field")).click();
+        Thread.sleep(2000);
+        driver.findElement(By.id("R801114255824919449_search_field")).sendKeys(requisitionDOCNO[1]);
+//        driver.findElement(By.id("R801114255824919449_search_field")).sendKeys("MI2SH10158");
+        Thread.sleep(2000);
+        driver.findElement(By.id("R801114255824919449_search_field")).sendKeys(Keys.ENTER);
+        Thread.sleep(2000);
+        driver.findElement(By.linkText(requisitionDOCNO[1]+"/MI/2")).click();
+//        driver.findElement(By.linkText("MI2SH10158/MI/2")).click();
+        Thread.sleep(3000);
+
+        WebElement table_element1 = driver.findElement(By.className("a-GV-table"));
+        List<WebElement> tr_collection1=table_element1.findElements(By.xpath("/html/body/form/div/div[2]/div/div/div/div/div/div/div/div[3]/div[3]/div[1]/div[3]/div[4]/table/tbody/tr"));
+        int count = tr_collection1.size();
+        System.out.println("ROW COUNT : "+count);
+
+        if(count>1){
+           for (int i = 1; i <= count; i++) {
+                Actions act5 = new Actions(driver);
+                WebElement ele5 = driver.findElement(By.xpath("/html/body/form/div/div[2]/div/div/div/div/div/div/div/div[3]/div[3]/div[1]/div[3]/div[4]/table/tbody/tr[" + i + "]/td[9]"));
+                act5.moveToElement(ele5);
+                Thread.sleep(3000);
+                act5.doubleClick(ele5).perform(); //table row double click for product code enable
+                Thread.sleep(3000);
+                driver.findElement(By.id("C573490683987171611")).sendKeys("1");
+                Thread.sleep(2000);
+                driver.findElement(By.id("C573490683987171611")).sendKeys(Keys.ENTER);
+                Thread.sleep(2000);
+                if(i==count) {
+                    driver.findElement(By.id("B156341159548901202")).click();
+                    Thread.sleep(2000);
+                    driver.findElement(By.id("SAVE")).click();
+                    Thread.sleep(2000);
+                }
+            }//end for
+
+        }else {
+            Actions act5 = new Actions(driver);
+            WebElement ele5 = driver.findElement(By.xpath("/html/body/form/div/div[2]/div/div/div/div/div/div/div/div[3]/div[3]/div[1]/div[3]/div[4]/table/tbody/tr/td[9]") );
+            act5.moveToElement(ele5);
+            Thread.sleep(3000);
+            act5.doubleClick(ele5).perform(); //table row double click for product code enable
+            Thread.sleep(3000);
+            driver.findElement(By.id("C573490683987171611")).sendKeys("1");
+            Thread.sleep(2000);
+            driver.findElement(By.id("C573490683987171611")).sendKeys(Keys.ENTER);
+            Thread.sleep(2000);
+            driver.findElement(By.id("B156341159548901202")).click();
+            Thread.sleep(2000);
+            driver.findElement(By.id("SAVE")).click();
+            Thread.sleep(2000);
+        }//end else
+
+        Thread.sleep(33000);
+
+        }//end of crerow_numateMaterialIssueRequisitionApproved
 
     /**
      * Function Name: log out to system
      * Description: Navigation to Inventory Management
      *
      */
-    public void logOut() throws Exception{
+    public void logOut(String loginfo, boolean isMail) throws Exception{
 
-        String loginInput [] = LoginlInitData.jtrillogin_password.split(",");
+//        String loginInput [] = LoginlInitData.production_executive_login.split(",");
+//        String loginInput [] = loginfo.split(",");
         Thread.sleep(5000);
-        driver.findElement(By.linkText("LOGOUT: "+loginInput[0])).click();
+//        driver.findElement(By.linkText("LOGOUT: "+loginInput[0])).click();
+        driver.findElement(By.linkText("LOGOUT: "+loginfo)).click();
         assertThat(driver.switchTo().alert().getText(), is("You are about to exit. Are you sure to continue..?"));
         driver.switchTo().alert().accept();
         Thread.sleep(3000);
-        writeLog("JTRIL Log out Test Case ", false, true);
+        writeLog("JTRIL Log out Test Case ", true, isMail);
 
 
 

@@ -879,9 +879,9 @@ public class Logger {
             Properties properties = new Properties();
             //properties.put("mail.smtp.host", smtpHost);
             properties.put("mail.smtp.host", "mail.erainfotechbd.com"); //SMTP Host
-            properties.put("mail.smtp.port", "587"); //TLS Port
+            properties.put("mail.smtp.port", "587"); //TLS Port 587 or 465
             properties.put("mail.smtp.auth", "true"); //enable authentication
-            properties.put("mail.smtp.starttls.enable", "true"); //enable STARTTLS
+            //properties.put("mail.smtp.starttls.enable", "true"); //enable STARTTLS
 
             Authenticator auth = new Authenticator() {
                 //override the getPasswordAuthentication method
